@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Court</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Bookminton</h2>
+        <div>
+            <a href="/">Home</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/locations">Edit Location</a>
+            <% } else { %>
+                <a href="/locations">View Locations</a>
+            <% } %>
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/feedback">Feedback</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/bookings">All Bookings</a>
+                <a href="/admin-feedback">Feedbacks</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/my-bookings">My Bookings</a>
+            <% } %>
+
+            <% if (loggedInUser) { %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a href="/profile">Profile</a>
+                <% } %>
+                <span class="login-text">Hi, <%= loggedInUser.username %> (<%= loggedInUser.role %>)</span>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-box">
+            <h1>Book a Court</h1>
+
+            <p class="hint">
+                You selected this location from View Locations. Choose your court and date to see available time slots.
+            </p>
+
+            <% if (error) { %>
+                <p class="error"><%= error %></p>
+            <% } %>
+
+            <form method="POST" action="/add">
+                <input type="hidden" name="location" value="<%= selectedLocation %>">
+
+                <label>Selected Sports Hall Location</label>
+                <div class="selected-location-display">
+                    <img src="<%= chosenLocation.image %>" alt="<%= chosenLocation.name %>">
+                    <div>
+                        <h2><%= chosenLocation.name %></h2>
+                        <p>This is the location you selected for your booking.</p>
+                        <p><strong>Address:</strong> <%= chosenLocation.address || "Address not added yet" %></p>
+
+                        <a class="small-btn" href="/locations">Change Location</a>
+</div>
+                </div>
+
+                <div class="selected-map-box">
+                    <iframe
+                        src="https://maps.google.com/maps?q=<%= encodeURIComponent(chosenLocation.mapQuery || chosenLocation.address || chosenLocation.name) %>&output=embed"
+                        loading="lazy">
+                    </iframe>
+                    </div>
+                </div>
+
+                <label>Choose Court</label>
+                <select name="court" id="court" required>
+                    <option value="">-- Select Court --</option>
+                    <option value="Court 1" <%= oldData && oldData.court === "Court 1" ? "selected" : "" %>>Court 1</option>
+                    <option value="Court 2" <%= oldData && oldData.court === "Court 2" ? "selected" : "" %>>Court 2</option>
+                    <option value="Court 3" <%= oldData && oldData.court === "Court 3" ? "selected" : "" %>>Court 3</option>
+                    <option value="Court 4" <%= oldData && oldData.court === "Court 4" ? "selected" : "" %>>Court 4</option>
+                </select>
+
+                <label>Booking Date</label>
+                <input type="date" name="date" id="date" value="<%= oldData && oldData.date ? oldData.date : '' %>" min="<%= todayDate %>" max="<%= maxNormalBookingDate %>" required>
+                <p class="hint">Normal booking only allows dates from today up to 2 weeks ahead.</p>
+
+                <p class="hint">Profile details are auto-filled. You can edit them here for this booking, or update them permanently from Profile.</p>
+
+                <label>Full Name</label>
+                <input type="text" name="name" value="<%= oldData && oldData.name ? oldData.name : '' %>" required>
+
+                <label>Phone Number</label>
+                <input type="text" name="phone" value="<%= oldData && oldData.phone ? oldData.phone : '' %>" required>
+
+                <label>Booking Time</label>
+
+                <% if (selectedLocation && selectedCourt && selectedDate && availableTimes.length === 0) { %>
+                    <p class="error">All time slots for this sports hall, court and date are fully booked.</p>
+                <% } %>
+
+                <select name="time" required <%= selectedLocation && selectedCourt && selectedDate && availableTimes.length === 0 ? "disabled" : "" %>>
+                    <option value="">-- Select Available Time --</option>
+                    <% for (let i = 0; i < availableTimes.length; i++) { %>
+                        <option value="<%= availableTimes[i] %>" <%= oldData && oldData.time === availableTimes[i] ? "selected" : "" %>>
+                            <%= availableTimes[i] %>
+                        </option>
+                    <% } %>
+                </select>
+
+                <label>Number of Players</label>
+                <input type="number" name="players" min="1" max="8" value="<%= oldData && oldData.players ? oldData.players : '' %>" required>
+
+                <label>Skill Level</label>
+                <select name="skill" required>
+                    <option value="">-- Select Skill Level --</option>
+                    <option value="Beginner" <%= oldData && oldData.skill === "Beginner" ? "selected" : "" %>>Beginner</option>
+                    <option value="Intermediate" <%= oldData && oldData.skill === "Intermediate" ? "selected" : "" %>>Intermediate</option>
+                    <option value="Advanced" <%= oldData && oldData.skill === "Advanced" ? "selected" : "" %>>Advanced</option>
+                </select>
+
+                <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                    <label>Rating</label>
+                    <div class="star-rating">
+                        <input type="radio" id="add-star5" name="rating" value="5" <%= oldData && oldData.rating == 5 ? "checked" : "" %>>
+                        <label for="add-star5">★</label>
+
+                        <input type="radio" id="add-star4" name="rating" value="4" <%= oldData && oldData.rating == 4 ? "checked" : "" %>>
+                        <label for="add-star4">★</label>
+
+                        <input type="radio" id="add-star3" name="rating" value="3" <%= oldData && oldData.rating == 3 ? "checked" : "" %>>
+                        <label for="add-star3">★</label>
+
+                        <input type="radio" id="add-star2" name="rating" value="2" <%= oldData && oldData.rating == 2 ? "checked" : "" %>>
+                        <label for="add-star2">★</label>
+
+                        <input type="radio" id="add-star1" name="rating" value="1" <%= oldData && oldData.rating == 1 ? "checked" : "" %>>
+                        <label for="add-star1">★</label>
+                    </div>
+                <% } %>
+<button type="submit" <%= selectedLocation && selectedCourt && selectedDate && availableTimes.length === 0 ? "disabled" : "" %>>
+                    Continue to Payment
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const courtInput = document.getElementById("court");
+        const dateInput = document.getElementById("date");
+        const selectedLocation = "<%= selectedLocation %>";
+
+        function refreshAvailableTimes() {
+            const court = courtInput.value;
+            const date = dateInput.value;
+
+            if (selectedLocation && court && date) {
+                window.location.href = "/add?location=" + encodeURIComponent(selectedLocation) +
+                    "&court=" + encodeURIComponent(court) +
+                    "&date=" + encodeURIComponent(date);
+            }
+        }
+
+        courtInput.addEventListener("change", refreshAvailableTimes);
+        dateInput.addEventListener("change", refreshAvailableTimes);
+    </script>
+
+</body>
+</html>

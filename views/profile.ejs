@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Bookminton</h2>
+        <div>
+            <a href="/">Home</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/locations">Edit Location</a>
+            <% } else { %>
+                <a href="/locations">View Locations</a>
+            <% } %>
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/feedback">Feedback</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/bookings">All Bookings</a>
+                <a href="/admin-feedback">Feedbacks</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/my-bookings">My Bookings</a>
+            <% } %>
+
+            <% if (loggedInUser) { %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a href="/profile">Profile</a>
+                <% } %>
+                <span class="login-text">Hi, <%= loggedInUser.username %> (<%= loggedInUser.role %>)</span>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-box profile-box">
+            <h1>My Profile</h1>
+            <p class="hint">Update your personal details and saved card details here.</p>
+
+            <% if (success) { %>
+                <p class="success"><%= success %></p>
+            <% } %>
+
+            <% if (error) { %>
+                <p class="error"><%= error %></p>
+            <% } %>
+
+            <form method="POST" action="/profile">
+                <h2>Personal Details</h2>
+
+                <label>Full Name</label>
+                <input type="text" name="fullName" value="<%= loggedInUser.fullName || '' %>" required>
+
+                <label>Phone Number</label>
+                <input type="text" name="phone" value="<%= loggedInUser.phone || '' %>" required>
+
+                <h2>Saved Card Details</h2>
+                <p class="hint">You can add or edit your saved card details. CVV is not saved.</p>
+
+                <% if (savedCard) { %>
+                    <div class="saved-card-box">
+                        <p><strong>Current Saved Card:</strong> <%= savedCard.fullCardNumber %></p>
+                        <p><strong>Name on Card:</strong> <%= savedCard.cardName %></p>
+                        <p><strong>Expiry:</strong> <%= savedCard.expiry %></p>
+                    </div>
+                <% } else { %>
+                    <p class="notice">No saved card yet.</p>
+                <% } %>
+
+                <label>Name on Card</label>
+                <input type="text" name="cardName" value="<%= savedCard ? savedCard.cardName : '' %>" placeholder="Example: John Tan">
+
+                <label>Full Card Number</label>
+                <input type="text" name="fullCardNumber" value="<%= savedCard ? savedCard.fullCardNumber : '' %>" placeholder="Enter 16 digits" maxlength="16">
+
+                <label>Expiry Date</label>
+                <input type="text" name="expiry" value="<%= savedCard ? savedCard.expiry : '' %>" placeholder="MM/YY">
+
+                <button type="submit">Save Profile</button>
+            </form>
+
+            <% if (savedCard) { %>
+                <form method="POST" action="/profile/delete-card">
+                    <button class="delete" type="submit">Remove Saved Card</button>
+                </form>
+            <% } %>
+        </div>
+    </div>
+
+</body>
+</html>

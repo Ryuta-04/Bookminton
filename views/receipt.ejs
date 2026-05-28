@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Receipt</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Bookminton</h2>
+        <div>
+            <a href="/">Home</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/locations">Edit Location</a>
+            <% } else { %>
+                <a href="/locations">View Locations</a>
+            <% } %>
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/feedback">Feedback</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/bookings">All Bookings</a>
+                <a href="/admin-feedback">Feedbacks</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/my-bookings">My Bookings</a>
+            <% } %>
+
+            <% if (loggedInUser) { %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a href="/profile">Profile</a>
+                <% } %>
+                <span class="login-text">Hi, <%= loggedInUser.username %> (<%= loggedInUser.role %>)</span>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="details-box receipt-box">
+            <h1>Payment Successful</h1>
+
+            <p class="success">Your booking has been confirmed and $<%= receipt.amount %> has been deducted.</p>
+
+            <% if (receipt.discountUsed) { %>
+                <p class="discount-text">20% discount was applied to this booking.</p>
+            <% } else if (receipt.discountReady) { %>
+                <p class="discount-text">You did not use your discount. It is still available for your next booking.</p>
+            <% } %>
+
+            <h3>Receipt</h3>
+
+            <p><strong>Receipt ID:</strong> R<%= receipt.id %></p>
+            <p><strong>Booking ID:</strong> B<%= receipt.bookingId %></p>
+            <p><strong>User:</strong> <%= receipt.username %></p>
+            <p><strong>Name:</strong> <%= receipt.name %></p>
+            <p><strong>Location:</strong> <%= receipt.location %></p>
+            <p><strong>Court:</strong> <%= receipt.court %></p>
+            <p><strong>Date:</strong> <%= receipt.date %></p>
+            <p><strong>Time:</strong> <%= receipt.time %></p>
+            <p><strong>Original Amount:</strong> $<%= receipt.originalAmount %></p>
+            <p><strong>Discount:</strong> -$<%= receipt.discountAmount %></p>
+            <p><strong>Amount Deducted:</strong> $<%= receipt.amount %></p>
+            <p><strong>Card:</strong> **** **** **** <%= receipt.cardLastFour %></p>
+
+            <% if (receipt.cardSaved) { %>
+                <p class="success">Your full card number has been saved for future payments. CVV was not saved.</p>
+            <% } %>
+            <p><strong>Status:</strong> <%= receipt.paymentStatus %></p>
+            <p><strong>Payment Date:</strong> <%= receipt.paymentDate %></p>
+
+            <% if (receipt.discountReady) { %>
+                <p class="success">You have a 20% discount available. You can choose to use it during payment.</p>
+            <% } else { %>
+                <p class="hint">Reward Progress: <%= receipt.bookingProgress %>/10 bookings</p>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a class="btn" href="/bookings">View All Bookings</a>
+            <% } else { %>
+                <a class="btn" href="/my-bookings">View My Bookings</a>
+            <% } %>
+
+            <a class="btn secondary" href="/">Back Home</a>
+        </div>
+    </div>
+
+</body>
+</html>

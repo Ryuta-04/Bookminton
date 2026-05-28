@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Details</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Bookminton</h2>
+        <div>
+            <a href="/">Home</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/locations">Edit Location</a>
+            <% } else { %>
+                <a href="/locations">View Locations</a>
+            <% } %>
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/feedback">Feedback</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/bookings">All Bookings</a>
+                <a href="/admin-feedback">Feedbacks</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/my-bookings">My Bookings</a>
+            <% } %>
+
+            <% if (loggedInUser) { %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a href="/profile">Profile</a>
+                <% } %>
+                <span class="login-text">Hi, <%= loggedInUser.username %> (<%= loggedInUser.role %>)</span>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="details-box">
+            <h1>Booking Details</h1>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <p><strong>Booked By:</strong> <%= booking.createdBy %></p>
+            <% } %>
+
+            <p><strong>Name:</strong> <%= booking.name %></p>
+            <p><strong>Phone:</strong> <%= booking.phone %></p>
+            <p><strong>Location:</strong> <%= booking.location %></p>
+            <p><strong>Court:</strong> <%= booking.court %></p>
+            <p><strong>Date:</strong> <%= booking.date %></p>
+            <p><strong>Time:</strong> <%= booking.time %></p>
+            <p><strong>Number of Players:</strong> <%= booking.players %></p>
+            <p><strong>Skill Level:</strong> <%= booking.skill %></p>
+            <p><strong>Rating:</strong> <%= booking.rating %></p>
+<% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a class="btn" href="/edit/<%= booking.id %>">Edit Booking</a>
+                <a class="btn secondary" href="/bookings">Back</a>
+            <% } else { %>
+                <a class="btn secondary" href="/my-bookings">Back</a>
+            <% } %>
+        </div>
+    </div>
+
+</body>
+</html>

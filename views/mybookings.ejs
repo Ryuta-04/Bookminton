@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Bookings</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Bookminton</h2>
+        <div>
+            <a href="/">Home</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/locations">Edit Location</a>
+            <% } else { %>
+                <a href="/locations">View Locations</a>
+            <% } %>
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/feedback">Feedback</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/bookings">All Bookings</a>
+                <a href="/admin-feedback">Feedbacks</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/my-bookings">My Bookings</a>
+            <% } %>
+
+            <% if (loggedInUser) { %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a href="/profile">Profile</a>
+                <% } %>
+                <span class="login-text">Hi, <%= loggedInUser.username %> (<%= loggedInUser.role %>)</span>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>My Bookings</h1>
+        <p class="notice">Normal users can only view their own bookings. Admin controls edit and delete.</p>
+
+        <% if (bookings.length === 0) { %>
+            <div class="empty-box">
+                <p>You have no bookings yet.</p>
+                <a class="btn" href="/add">Book a Court</a>
+            </div>
+        <% } else { %>
+            <div class="table-box">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Court</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Players</th>
+                        <th>Actions</th>
+                    </tr>
+
+                    <% for (let i = 0; i < bookings.length; i++) { %>
+                        <tr>
+                            <td><%= bookings[i].name %></td>
+                            <td><%= bookings[i].location %></td>
+                            <td><%= bookings[i].court %></td>
+                            <td><%= bookings[i].date %></td>
+                            <td><%= bookings[i].time %></td>
+                            <td><%= bookings[i].players %></td>
+                            <td>
+                                <a class="small-btn" href="/bookings/<%= bookings[i].id %>">Details</a>
+                            </td>
+                        </tr>
+                    <% } %>
+                </table>
+            </div>
+        <% } %>
+    </div>
+
+</body>
+</html>

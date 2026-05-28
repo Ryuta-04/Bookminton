@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Bookminton</h2>
+        <div>
+            <a href="/">Home</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/locations">Edit Location</a>
+            <% } else { %>
+                <a href="/locations">View Locations</a>
+            <% } %>
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/feedback">Feedback</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/bookings">All Bookings</a>
+                <a href="/admin-feedback">Feedbacks</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/my-bookings">My Bookings</a>
+            <% } %>
+
+            <% if (loggedInUser) { %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a href="/profile">Profile</a>
+                <% } %>
+                <span class="login-text">Hi, <%= loggedInUser.username %> (<%= loggedInUser.role %>)</span>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-box feedback-box">
+            <h1>Send Feedback</h1>
+            <p class="hint">Write your feedback below. It will be sent to the admin.</p>
+
+            <% if (success) { %>
+                <p class="success"><%= success %></p>
+            <% } %>
+
+            <% if (error) { %>
+                <p class="error"><%= error %></p>
+            <% } %>
+
+            <form method="POST" action="/feedback">
+                <label>Feedback Subject</label>
+                <input type="text" name="subject" placeholder="Example: Booking experience" required>
+
+                <label>Rating</label>
+                <div class="star-rating">
+                    <input type="radio" id="star5" name="rating" value="5" required>
+                    <label for="star5">★</label>
+
+                    <input type="radio" id="star4" name="rating" value="4">
+                    <label for="star4">★</label>
+
+                    <input type="radio" id="star3" name="rating" value="3">
+                    <label for="star3">★</label>
+
+                    <input type="radio" id="star2" name="rating" value="2">
+                    <label for="star2">★</label>
+
+                    <input type="radio" id="star1" name="rating" value="1">
+                    <label for="star1">★</label>
+                </div>
+
+                <label>Feedback Message</label>
+                <textarea name="message" rows="5" placeholder="Write your feedback here..." required></textarea>
+
+                <button type="submit">Send Feedback</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

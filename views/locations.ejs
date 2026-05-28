@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Locations</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Bookminton</h2>
+        <div>
+            <a href="/">Home</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/locations">Edit Location</a>
+            <% } else { %>
+                <a href="/locations">View Locations</a>
+            <% } %>
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/feedback">Feedback</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/bookings">All Bookings</a>
+                <a href="/admin-feedback">Feedbacks</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/my-bookings">My Bookings</a>
+            <% } %>
+
+            <% if (loggedInUser) { %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a href="/profile">Profile</a>
+                <% } %>
+                <span class="login-text">Hi, <%= loggedInUser.username %> (<%= loggedInUser.role %>)</span>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <% if (loggedInUser && loggedInUser.role === "admin") { %>
+            <h1>Edit Location</h1>
+            <p class="notice">Admin can add a new sports hall location here.</p>
+
+            <div class="form-box location-admin-box">
+                <h2>Add New Location</h2>
+
+                <% if (success) { %>
+                    <p class="success"><%= success %></p>
+                <% } %>
+
+                <% if (error) { %>
+                    <p class="error"><%= error %></p>
+                <% } %>
+
+                <form method="POST" action="/locations/add">
+                    <label>Location Name</label>
+                    <input type="text" name="locationName" placeholder="Example: Tampines Sports Hall" required>
+
+                    <label>Image URL</label>
+                    <input type="text" name="locationImage" placeholder="Example: https://example.com/image.jpg" required>
+
+                    <label>Address</label>
+                    <input type="text" name="locationAddress" placeholder="Example: 2 Woodlands Street 12 Singapore 738620" required>
+
+                    <button type="submit">Add Location</button>
+                </form>
+            </div>
+        <% } else { %>
+            <h1>View Locations</h1>
+            <p class="notice">Choose a sports hall location, then click Book Here to start booking from that location.</p>
+        <% } %>
+
+        <div class="view-location-grid">
+            <% for (let i = 0; i < locations.length; i++) { %>
+                <div class="view-location-card">
+                    <img src="<%= locations[i].image %>" alt="<%= locations[i].name %>">
+
+                    <div class="view-location-content">
+                        <h2><%= locations[i].name %></h2>
+                        <p>Available for badminton court booking.</p>
+                        <p><strong>Address:</strong> <%= locations[i].address || "Address not added yet" %></p>
+
+                        <div class="location-action-row">
+                            <button type="button" class="small-btn" onclick="toggleMap('<%= i %>')">
+                                View Map
+                            </button>
+<% if (loggedInUser) { %>
+                                <a class="small-btn book-btn" href="/add?location=<%= encodeURIComponent(locations[i].name) %>">
+                                    Book Here
+                                </a>
+                            <% } else { %>
+                                <a class="small-btn book-btn" href="/login">
+                                    Login to Book
+                                </a>
+                            <% } %>
+                        </div>
+
+                        <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                            <div class="admin-location-actions">
+                                <a class="small-btn edit" href="/locations/edit/<%= i %>">Edit</a>
+
+                                <form method="POST" action="/locations/delete/<%= i %>" class="delete-form">
+                                    <button class="small-btn delete" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        <% } %>
+
+                        <div class="map-box" id="map-<%= i %>" style="display: none;">
+                            <iframe
+                                src="https://maps.google.com/maps?q=<%= encodeURIComponent(locations[i].mapQuery || locations[i].address || locations[i].name) %>&output=embed"
+                                loading="lazy">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        function toggleMap(index) {
+            const mapBox = document.getElementById("map-" + index);
+
+            if (mapBox.style.display === "none") {
+                mapBox.style.display = "block";
+            } else {
+                mapBox.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>

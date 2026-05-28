@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Booking</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Bookminton</h2>
+        <div>
+            <a href="/">Home</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/locations">Edit Location</a>
+            <% } else { %>
+                <a href="/locations">View Locations</a>
+            <% } %>
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/feedback">Feedback</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/bookings">All Bookings</a>
+                <a href="/admin-feedback">Feedbacks</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/my-bookings">My Bookings</a>
+            <% } %>
+
+            <% if (loggedInUser) { %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a href="/profile">Profile</a>
+                <% } %>
+                <span class="login-text">Hi, <%= loggedInUser.username %> (<%= loggedInUser.role %>)</span>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-box">
+            <h1>Edit Booking</h1>
+            <p class="hint">Admin only page. Admin can update booking details and rating.</p>
+
+            <% if (typeof error !== "undefined" && error) { %>
+                <p class="error"><%= error %></p>
+            <% } %>
+
+            <form method="POST" action="/edit/<%= booking.id %>">
+                <label>Full Name</label>
+                <input type="text" name="name" value="<%= booking.name %>" required>
+
+                <label>Phone Number</label>
+                <input type="text" name="phone" value="<%= booking.phone %>" required>
+
+                <label>Choose Location</label>
+                <select name="location" required>
+                    <option value="Woodlands Sports Hall" <%= booking.location === 'Woodlands Sports Hall' ? 'selected' : '' %>>Woodlands Sports Hall</option>
+                    <option value="Yio Chu Kang Sports Hall" <%= booking.location === 'Yio Chu Kang Sports Hall' ? 'selected' : '' %>>Yio Chu Kang Sports Hall</option>
+                    <option value="Clementi Sports Hall" <%= booking.location === 'Clementi Sports Hall' ? 'selected' : '' %>>Clementi Sports Hall</option>
+                    <option value="Bukit Canberra Sports Hall" <%= booking.location === 'Bukit Canberra Sports Hall' ? 'selected' : '' %>>Bukit Canberra Sports Hall</option>
+                    <option value="Yishun Sports Hall" <%= booking.location === 'Yishun Sports Hall' ? 'selected' : '' %>>Yishun Sports Hall</option>
+                </select>
+
+                <label>Choose Court</label>
+                <select name="court" required>
+                    <option value="Court 1" <%= booking.court === 'Court 1' ? 'selected' : '' %>>Court 1</option>
+                    <option value="Court 2" <%= booking.court === 'Court 2' ? 'selected' : '' %>>Court 2</option>
+                    <option value="Court 3" <%= booking.court === 'Court 3' ? 'selected' : '' %>>Court 3</option>
+                    <option value="Court 4" <%= booking.court === 'Court 4' ? 'selected' : '' %>>Court 4</option>
+                </select>
+
+                <label>Booking Date</label>
+                <input type="date" name="date" value="<%= booking.date %>" required>
+
+                <label>Booking Time</label>
+                <select name="time" required>
+                    <option value="9:00 AM - 10:00 AM" <%= booking.time === '9:00 AM - 10:00 AM' ? 'selected' : '' %>>9:00 AM - 10:00 AM</option>
+                    <option value="10:00 AM - 11:00 AM" <%= booking.time === '10:00 AM - 11:00 AM' ? 'selected' : '' %>>10:00 AM - 11:00 AM</option>
+                    <option value="11:00 AM - 12:00 PM" <%= booking.time === '11:00 AM - 12:00 PM' ? 'selected' : '' %>>11:00 AM - 12:00 PM</option>
+                    <option value="2:00 PM - 3:00 PM" <%= booking.time === '2:00 PM - 3:00 PM' ? 'selected' : '' %>>2:00 PM - 3:00 PM</option>
+                    <option value="3:00 PM - 4:00 PM" <%= booking.time === '3:00 PM - 4:00 PM' ? 'selected' : '' %>>3:00 PM - 4:00 PM</option>
+                    <option value="7:00 PM - 8:00 PM" <%= booking.time === '7:00 PM - 8:00 PM' ? 'selected' : '' %>>7:00 PM - 8:00 PM</option>
+                </select>
+
+                <label>Number of Players</label>
+                <input type="number" name="players" min="1" max="8" value="<%= booking.players %>" required>
+
+                <label>Skill Level</label>
+                <select name="skill" required>
+                    <option value="Beginner" <%= booking.skill === 'Beginner' ? 'selected' : '' %>>Beginner</option>
+                    <option value="Intermediate" <%= booking.skill === 'Intermediate' ? 'selected' : '' %>>Intermediate</option>
+                    <option value="Advanced" <%= booking.skill === 'Advanced' ? 'selected' : '' %>>Advanced</option>
+                </select>
+
+                <label>Rating</label>
+                <div class="star-rating">
+                    <input type="radio" id="edit-star5" name="rating" value="5" <%= booking.rating == 5 ? "checked" : "" %>>
+                    <label for="edit-star5">★</label>
+
+                    <input type="radio" id="edit-star4" name="rating" value="4" <%= booking.rating == 4 ? "checked" : "" %>>
+                    <label for="edit-star4">★</label>
+
+                    <input type="radio" id="edit-star3" name="rating" value="3" <%= booking.rating == 3 ? "checked" : "" %>>
+                    <label for="edit-star3">★</label>
+
+                    <input type="radio" id="edit-star2" name="rating" value="2" <%= booking.rating == 2 ? "checked" : "" %>>
+                    <label for="edit-star2">★</label>
+
+                    <input type="radio" id="edit-star1" name="rating" value="1" <%= booking.rating == 1 ? "checked" : "" %>>
+                    <label for="edit-star1">★</label>
+                </div>
+                <p class="hint">Leave blank if the booking is not rated.</p>
+<button type="submit">Update Booking</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

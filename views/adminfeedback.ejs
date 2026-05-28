@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Feedback</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Bookminton</h2>
+        <div>
+            <a href="/">Home</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/locations">Edit Location</a>
+            <% } else { %>
+                <a href="/locations">View Locations</a>
+            <% } %>
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/feedback">Feedback</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/bookings">All Bookings</a>
+                <a href="/admin-feedback">Feedbacks</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/my-bookings">My Bookings</a>
+            <% } %>
+
+            <% if (loggedInUser) { %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a href="/profile">Profile</a>
+                <% } %>
+                <span class="login-text">Hi, <%= loggedInUser.username %> (<%= loggedInUser.role %>)</span>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>User Feedback</h1>
+        <p class="notice">Admin can view feedback submitted by users here.</p>
+
+        <% if (feedbacks.length === 0) { %>
+            <div class="empty-box">
+                <p>No feedback has been submitted yet.</p>
+            </div>
+        <% } else { %>
+            <div class="feedback-list">
+                <% for (let i = 0; i < feedbacks.length; i++) { %>
+                    <div class="feedback-card">
+                        <h2><%= feedbacks[i].subject %></h2>
+                        <p><strong>From:</strong> <%= feedbacks[i].username %> (<%= feedbacks[i].role %>)</p>
+                        <p><strong>Rating:</strong> <%= feedbacks[i].rating %>/5</p>
+                        <p><strong>Date:</strong> <%= feedbacks[i].date %></p>
+                        <p><strong>Message:</strong></p>
+                        <p class="feedback-message"><%= feedbacks[i].message %></p>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Badminton Court Tracker</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Bookminton</h2>
+        <div>
+            <a href="/">Home</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/locations">Edit Location</a>
+            <% } else { %>
+                <a href="/locations">View Locations</a>
+            <% } %>
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/feedback">Feedback</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                <a href="/bookings">All Bookings</a>
+                <a href="/admin-feedback">Feedbacks</a>
+            <% } %>
+
+            <% if (loggedInUser && loggedInUser.role === "user") { %>
+                <a href="/my-bookings">My Bookings</a>
+            <% } %>
+
+            <% if (loggedInUser) { %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a href="/profile">Profile</a>
+                <% } %>
+                <span class="login-text">Hi, <%= loggedInUser.username %> (<%= loggedInUser.role %>)</span>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="hero">
+        <h1>Bookminton Court Booking Website</h1>
+        <p>Bookminton is a quick and easy booking website</p>
+
+        <% if (loggedInUser) { %>
+            <div class="hero-button-area">
+                <a class="btn main-book-btn" href="/locations">Book a Court</a>
+
+                <div class="hero-sub-buttons">
+                <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                    <a class="btn secondary" href="/locations">Edit Location</a>
+                <% } else { %>
+                    <a class="btn secondary" href="/locations">View Locations</a>
+                <% } %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a class="btn secondary" href="/feedback">Send Feedback</a>
+                <% } %>
+
+            <% if (loggedInUser.role === "admin") { %>
+                <a class="btn secondary" href="/bookings">View All Bookings</a>
+            <% } else { %>
+                <a class="btn secondary" href="/my-bookings">View My Bookings</a>
+            <% } %>
+        <% } else { %>
+            <a class="btn" href="/login">Login to Book a Court</a>
+            <% if (loggedInUser && loggedInUser.role === "admin") { %>
+                    <a class="btn secondary" href="/locations">Edit Location</a>
+                <% } else { %>
+                    <a class="btn secondary" href="/locations">View Locations</a>
+                <% } %>
+                <% if (loggedInUser && loggedInUser.role === "user") { %>
+                    <a class="btn secondary" href="/feedback">Send Feedback</a>
+                <% } %>
+        <% } %>
+
+
+                </div>
+            </div>
+        <% if (loggedInUser) { %>
+            <div class="loyalty-progress-box">
+                <h3>Booking Reward Progress</h3>
+
+                <% if (loggedInUser.discountReady) { %>
+                    <p>Congratulations! Your next booking has a 20% discount.</p>
+                <% } else { %>
+                    <p><%= loggedInUser.bookingProgress %>/10 bookings completed. Complete 10 bookings to unlock 20% discount.</p>
+                <% } %>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: <%= loggedInUser.discountReady ? 100 : (loggedInUser.bookingProgress * 10) %>%;">
+                        <%= loggedInUser.discountReady ? '100%' : (loggedInUser.bookingProgress * 10) + '%' %>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+</body>
+</html>

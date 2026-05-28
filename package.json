@@ -1,0 +1,13 @@
+{
+  "name": "bookminton-court-booking",
+  "version": "1.0.0",
+  "description": "Personal Life Tracker - Badminton Court Booking App with Login",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.18.2"
+  }
+}
